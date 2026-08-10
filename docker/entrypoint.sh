@@ -64,7 +64,9 @@ fi
 
 # Uploaded images are served through public/storage -> storage/app/public.
 # public/ is image content rather than a volume, so this is re-made every boot.
-php artisan storage:link --force --no-interaction >/dev/null
+# --relative keeps the link valid whichever root the project sits under, which
+# matters because the same checkout is also mounted at /var/www/html by Sail.
+php artisan storage:link --relative --force --no-interaction >/dev/null
 
 echo "[entrypoint] ready"
 

@@ -21,38 +21,84 @@ asks for, with no layout invented from scratch.
 
 ---
 
-## Running it with Docker
+## Running it with Sail
 
-The quickest path, and the one that needs nothing installed but Docker:
+[Laravel Sail](https://laravel.com/docs/sail) is the standard local
+environment. It needs Composer on the host once, to fetch Sail itself:
 
 ```bash
 git clone <repo-url>
 cd globetrek-app
-docker compose up
+
+composer install
+cp .env.example .env
+php artisan key:generate
+
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan migrate --seed
+./vendor/bin/sail artisan storage:link --relative
 ```
 
-Then open <http://localhost:8123>. The first boot builds the image, generates an
-app key, creates the SQLite file, migrates, seeds, and links storage — all of it
-in the entrypoint, so there is nothing to run by hand.
+Then open <http://localhost:8123> — the port comes from `APP_PORT` in `.env`.
 
 | Task | Command |
 | ---- | ------- |
-| Start (detached) | `docker compose up -d` |
-| Stop, keep data | `docker compose down` |
-| Stop and wipe data | `docker compose down -v` |
-| Logs | `docker compose logs -f` |
-| Run the tests | `docker compose exec app php artisan test` |
-| A shell inside it | `docker compose exec app bash` |
-| Reset the data | `docker compose exec app php artisan migrate:fresh --seed` |
+| Start / stop | `sail up -d` · `sail down` |
+| Logs | `sail logs -f` |
+| Tests | `sail artisan test` |
+| Artisan / Composer | `sail artisan …` · `sail composer …` |
+| A shell inside it | `sail shell` |
+| Reset the data | `sail artisan migrate:fresh --seed` |
 
-The database, the generated app key and any uploaded images live in a named
-volume mounted at `/app/storage`, so `down` then `up` keeps your data; `down -v`
-is the deliberate reset. Port 8123 on the host maps to 8000 in the container —
-change the left-hand number in `docker-compose.yml` if it is taken.
+Add `alias sail='./vendor/bin/sail'` to your shell to drop the `./vendor/bin/`.
 
-This is a development setup: `php artisan serve` is the container's command,
-which is fine for a demo but wants a real web server in front of it before
-production.
+Sail bind-mounts the project, so the container reads the same
+`database/database.sqlite` and the same files you edit — changes show up without
+a rebuild. Use `--relative` on `storage:link`: the default link is absolute and
+would resolve on the host but dangle at `/var/www/html` inside the container.
+
+### Why only one service
+
+Sail's stack is usually app + MySQL + Redis, but nothing here would use them.
+The database is SQLite, cache, queue and session all sit on that same database,
+and both notifications are `via() => ['database']` — in-app only, no mail.
+There is no `Redis::` or `Mail::` call in the codebase. Extra containers would
+idle, so `sail:install --with=none` is the honest stack. Moving to MySQL would
+be a real change, not a config flag, and worth doing only if the deployment
+target needs it.
+
+---
+
+## Running it with Docker alone
+
+Sail expects Composer on the host. This path needs **only Docker** — useful for
+handing the project to someone who has no PHP installed:
+
+```bash
+git clone <repo-url>
+cd globetrek-app
+docker compose -f docker-compose.standalone.yml up
+```
+
+Then open <http://localhost:8123>. The first boot generates an app key, creates
+the SQLite file, migrates, seeds and links storage in the entrypoint, so there
+is nothing to run by hand.
+
+| Task | Command (all prefixed `docker compose -f docker-compose.standalone.yml`) |
+| ---- | ------- |
+| Start (detached) | `… up -d` |
+| Stop, keep data | `… down` |
+| Stop and wipe data | `… down -v` |
+| Logs | `… logs -f` |
+| Run the tests | `… exec app php artisan test` |
+
+Unlike Sail this image is self-contained rather than bind-mounted: the database,
+app key and uploads live in a named volume on `/app/storage`, so `down` then
+`up` keeps data and `down -v` is the deliberate reset. Code changes need a
+rebuild — for day-to-day development, prefer Sail.
+
+Both Docker paths run `php artisan serve`, which is fine for a demo but wants a
+real web server in front of it before production.
 
 ---
 
@@ -102,7 +148,7 @@ booking history, plus the demo accounts below.
 **6. Link storage**
 
 ```bash
-php artisan storage:link
+php artisan storage:link --relative
 ```
 
 Not optional. Images uploaded through the content editor are written to the
@@ -110,6 +156,9 @@ Not optional. Images uploaded through the content editor are written to the
 every uploaded image fails to load (a 403 under `artisan serve`). The bundled
 theme photography keeps working either way, which makes the breakage look
 intermittent rather than obvious.
+
+`--relative` rather than a bare `storage:link`, so the same checkout also works
+when a container mounts it at a different path.
 
 **7. Start the server**
 
