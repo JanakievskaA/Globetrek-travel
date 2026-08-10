@@ -9,8 +9,10 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
+            # No Vite port: the site's CSS/JS are committed under public/assets
+            # and nothing routed uses @vite, so publishing 5173 would only
+            # collide with another Sail project on the same machine.
             - '${APP_PORT:-80}:80'
-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
