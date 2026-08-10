@@ -21,7 +21,42 @@ asks for, with no layout invented from scratch.
 
 ---
 
-## Installation
+## Running it with Docker
+
+The quickest path, and the one that needs nothing installed but Docker:
+
+```bash
+git clone <repo-url>
+cd globetrek-app
+docker compose up
+```
+
+Then open <http://localhost:8123>. The first boot builds the image, generates an
+app key, creates the SQLite file, migrates, seeds, and links storage — all of it
+in the entrypoint, so there is nothing to run by hand.
+
+| Task | Command |
+| ---- | ------- |
+| Start (detached) | `docker compose up -d` |
+| Stop, keep data | `docker compose down` |
+| Stop and wipe data | `docker compose down -v` |
+| Logs | `docker compose logs -f` |
+| Run the tests | `docker compose exec app php artisan test` |
+| A shell inside it | `docker compose exec app bash` |
+| Reset the data | `docker compose exec app php artisan migrate:fresh --seed` |
+
+The database, the generated app key and any uploaded images live in a named
+volume mounted at `/app/storage`, so `down` then `up` keeps your data; `down -v`
+is the deliberate reset. Port 8123 on the host maps to 8000 in the container —
+change the left-hand number in `docker-compose.yml` if it is taken.
+
+This is a development setup: `php artisan serve` is the container's command,
+which is fine for a demo but wants a real web server in front of it before
+production.
+
+---
+
+## Installation without Docker
 
 Requires **PHP 8.3+** and Composer. The database is SQLite, so there is no
 database server to install and no credentials to configure.
