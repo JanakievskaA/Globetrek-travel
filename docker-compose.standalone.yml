@@ -1,8 +1,13 @@
+# A distinct name from the Sail stack (`globetrek`), so the two can coexist on
+# one machine and an accidental `up` of both fails on the port rather than on a
+# container-name clash.
+name: globetrek-standalone
+
 services:
   app:
     build: .
-    image: globetrek-app
-    container_name: globetrek
+    image: globetrek/standalone
+    container_name: globetrek-standalone
     ports:
       # host:container — 8123 on the host keeps it clear of the 8000 the
       # original static template used. Change the left number if it is taken.

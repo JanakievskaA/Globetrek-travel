@@ -1,11 +1,16 @@
+# Without this, Compose names everything after the directory the checkout
+# happens to sit in — globetrek-app-laravel.test-1, or worse if it was renamed.
+name: globetrek
+
 services:
     laravel.test:
+        container_name: globetrek
         build:
             context: './vendor/laravel/sail/runtimes/8.4'
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-        image: 'sail-8.4/app'
+        image: 'globetrek/sail-8.4'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
