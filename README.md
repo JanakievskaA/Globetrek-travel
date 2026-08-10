@@ -27,8 +27,8 @@ asks for, with no layout invented from scratch.
 environment. It needs Composer on the host once, to fetch Sail itself:
 
 ```bash
-git clone <repo-url>
-cd globetrek-app
+git clone git@github.com:JanakievskaA/Globetrek-travel.git
+cd Globetrek-travel
 
 composer install
 cp .env.example .env
@@ -40,6 +40,7 @@ php artisan key:generate
 ```
 
 Then open <http://localhost:8123> — the port comes from `APP_PORT` in `.env`.
+Log in with the [demo accounts](#demo-accounts) further down.
 
 | Task | Command |
 | ---- | ------- |
@@ -52,10 +53,25 @@ Then open <http://localhost:8123> — the port comes from `APP_PORT` in `.env`.
 
 Add `alias sail='./vendor/bin/sail'` to your shell to drop the `./vendor/bin/`.
 
+The container is named **`globetrek`** — `compose.yaml` pins both the project
+and container name, because Compose otherwise derives them from whatever the
+checkout directory happens to be called:
+
+```
+$ docker ps
+NAMES        IMAGE                 PORTS
+globetrek    globetrek/sail-8.4    0.0.0.0:8123->80/tcp
+```
+
 Sail bind-mounts the project, so the container reads the same
 `database/database.sqlite` and the same files you edit — changes show up without
-a rebuild. Use `--relative` on `storage:link`: the default link is absolute and
-would resolve on the host but dangle at `/var/www/html` inside the container.
+a rebuild. Two consequences worth knowing:
+
+- `sail artisan migrate:fresh --seed` rewrites your real database file, not a
+  throwaway copy.
+- Use `--relative` on `storage:link`. The default link is absolute, so one made
+  on the host resolves there but dangles at `/var/www/html` inside the
+  container, and every uploaded image 403s.
 
 ### Why only one service
 
@@ -75,12 +91,13 @@ Sail expects Composer on the host. This path needs **only Docker** — useful fo
 handing the project to someone who has no PHP installed:
 
 ```bash
-git clone <repo-url>
-cd globetrek-app
+git clone git@github.com:JanakievskaA/Globetrek-travel.git
+cd Globetrek-travel
 docker compose -f docker-compose.standalone.yml up
 ```
 
-Then open <http://localhost:8123>. The first boot generates an app key, creates
+Then open <http://localhost:8123>, and log in with the
+[demo accounts](#demo-accounts). The first boot generates an app key, creates
 the SQLite file, migrates, seeds and links storage in the entrypoint, so there
 is nothing to run by hand.
 
@@ -92,10 +109,14 @@ is nothing to run by hand.
 | Logs | `… logs -f` |
 | Run the tests | `… exec app php artisan test` |
 
+This container is named `globetrek-standalone`, distinct from Sail's
+`globetrek`, so the two never clash over a name.
+
 Unlike Sail this image is self-contained rather than bind-mounted: the database,
 app key and uploads live in a named volume on `/app/storage`, so `down` then
-`up` keeps data and `down -v` is the deliberate reset. Code changes need a
-rebuild — for day-to-day development, prefer Sail.
+`up` keeps data and `down -v` is the deliberate reset. Nothing here touches the
+`database/database.sqlite` in your checkout. Code changes need a rebuild — for
+day-to-day development, prefer Sail.
 
 Both Docker paths run `php artisan serve`, which is fine for a demo but wants a
 real web server in front of it before production.
@@ -110,8 +131,8 @@ database server to install and no credentials to configure.
 **1. Clone the repository**
 
 ```bash
-git clone <repo-url>
-cd globetrek-app
+git clone git@github.com:JanakievskaA/Globetrek-travel.git
+cd Globetrek-travel
 ```
 
 **2. Install dependencies**
@@ -173,7 +194,10 @@ default to 8000, which is where the original static template was served from —
 worth keeping the two apart. Any free port works; `--port` and `APP_URL` in
 `.env` just need to agree.
 
-**Demo accounts** (password `password` for all):
+### Demo accounts
+
+Seeded by every install path — Sail, Docker or local. Password is `password`
+for all three:
 
 | Role     | Email                     | Lands on            |
 | -------- | ------------------------- | ------------------- |
