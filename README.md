@@ -47,7 +47,7 @@ php artisan key:generate
 ```
 
 No database credentials to edit — `.env.example` ships with
-`DB_CONNECTION=sqlite`, and the MySQL variables are left commented out.
+`DB_CONNECTION=sqlite`, which needs no host, port, user or password.
 
 **4. Create the database file**
 
