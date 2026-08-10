@@ -1,0 +1,2634 @@
+/* ==========================================================================
+   GlobeTrek — application styles layered on top of the template's style.css.
+   Everything here is prefixed `gt-` or scoped to a state class so the base
+   theme stays untouched and upgradeable.
+   ========================================================================== */
+
+:root {
+    --gt-radius: 16px;
+    --gt-radius-sm: 10px;
+    --gt-shadow: 0 12px 32px rgba(23, 24, 22, .08);
+    --gt-shadow-lg: 0 24px 60px rgba(23, 24, 22, .14);
+    --gt-ink: var(--heading-color, #24272c);
+    --gt-muted: var(--text-color, #5f615e);
+    --gt-line: var(--stoke-color, #ededed);
+    --gt-brand: var(--primary-color, #dca546);
+    --gt-ok: #2f9e6b;
+    --gt-warn: #d99a2b;
+    --gt-danger: #d0503c;
+    --gt-info: #3d7ea6;
+    --gt-transition: .28s cubic-bezier(.4, 0, .2, 1);
+}
+
+body.gt-no-scroll {
+    overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ chrome */
+
+.preload-container {
+    transition: opacity .4s ease, visibility .4s ease;
+    /* Fail-safe: the splash clears itself even if JavaScript never runs. */
+    animation: gt-preload-out .4s ease 3s forwards;
+}
+
+.preload-container.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+@keyframes gt-preload-out {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* animate.css hides every .wow element until WOW.js reveals it. If the library
+   fails to boot the page would be permanently blank, so guarantee a reveal. */
+.wow.gt-revealed {
+    visibility: visible !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wow {
+        visibility: visible !important;
+        animation: none !important;
+    }
+
+    .preload-container {
+        display: none !important;
+    }
+
+    * {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
+    }
+}
+
+#header {
+    transition: background-color var(--gt-transition), box-shadow var(--gt-transition);
+}
+
+#header.is-scrolled {
+    background-color: #fff;
+    box-shadow: 0 6px 24px rgba(23, 24, 22, .08);
+}
+
+#header.style-2.is-scrolled .nav-link,
+#header.style-2.is-scrolled .wrap-login-menu a,
+#header.style-2.is-scrolled .wrap-login-menu .icon {
+    color: var(--gt-ink);
+}
+
+#header.style-2.is-scrolled .toggle-mobile .icon {
+    color: var(--gt-ink) !important;
+}
+
+#header.style-2.is-scrolled #logo img {
+    filter: brightness(0) saturate(100%);
+}
+
+.menu-item.current-menu > .nav-link {
+    color: var(--gt-brand) !important;
+}
+
+/* Solid header: icons and links must read against white. */
+#header.style-1 .wrap-login-menu,
+#header.style-1 .wrap-login-menu a,
+#header.style-1 .wrap-login-menu .icon {
+    color: var(--gt-ink);
+}
+
+.gt-wishlist-link {
+    position: relative;
+}
+
+.gt-wishlist-count {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--heart-color, #ff4f23);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+}
+
+#backtotop {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: all var(--gt-transition);
+}
+
+#backtotop.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+/* mobile drawer ------------------------------------------------------------ */
+
+.mobile-menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(360px, 86vw);
+    background: #fff;
+    z-index: 1200;
+    transform: translateX(-102%);
+    transition: transform var(--gt-transition);
+    overflow-y: auto;
+}
+
+.mobile-menu.is-open {
+    transform: none;
+}
+
+.header .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 18, 15, .5);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1100;
+    transition: opacity var(--gt-transition), visibility var(--gt-transition);
+}
+
+.header .overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.header .close-btn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--gt-ink);
+    cursor: pointer;
+    z-index: 1300;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--gt-transition);
+}
+
+.header .close-btn.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-menu .mb-sub-menu {
+    display: none;
+    padding-left: 14px;
+}
+
+.mobile-menu .mb-sub-menu.is-open {
+    display: block;
+}
+
+.mobile-menu .mobile-dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--gt-line);
+    color: var(--gt-ink);
+    font-weight: 600;
+}
+
+.mobile-menu .mobile-dropdown .mb-icon {
+    transition: transform var(--gt-transition);
+}
+
+.mobile-menu .mobile-dropdown.is-open .mb-icon {
+    transform: rotate(180deg);
+}
+
+.mobile-menu .mb-sub-menu a {
+    display: block;
+    padding: 9px 0;
+    color: var(--gt-muted);
+}
+
+.mobile-menu .menu-box {
+    padding: 28px 24px 40px;
+}
+
+/* ---------------------------------------------------------------- hero search */
+
+/* Hero photography varies wildly in brightness, so the slide carries its own
+   scrim rather than relying on the image being dark enough. */
+.slider-default .home-5 .box-banner {
+    position: relative;
+    min-height: 720px;
+    display: flex;
+    align-items: center;
+}
+
+.slider-default .home-5 .box-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+            rgba(11, 15, 12, .58) 0%,
+            rgba(11, 15, 12, .28) 40%,
+            rgba(11, 15, 12, .78) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.slider-default .home-5 .container-2 {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.slider-default .home-5 .box-title {
+    padding: 150px 0 60px;
+}
+
+.slider-default .home-5 .tf-meta {
+    position: relative;
+    z-index: 2;
+    padding-bottom: 46px;
+    color: rgba(255, 255, 255, .85);
+}
+
+@media (max-width: 991px) {
+    .slider-default .home-5 .box-banner {
+        min-height: 640px;
+    }
+
+    .slider-default .home-5 .box-title {
+        padding: 130px 0 40px;
+    }
+
+    .slider-default .home-5 .tf-meta {
+        display: none;
+    }
+}
+
+.gt-hero__summary {
+    max-width: 640px;
+    margin: 0 auto 34px;
+    color: rgba(255, 255, 255, .88) !important;
+    text-align: center;
+}
+
+.gt-hero__link {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.gt-search {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    gap: 0;
+    align-items: stretch;
+    background: #fff;
+    border-radius: 999px;
+    padding: 16px 16px 16px 14px;
+    box-shadow: var(--gt-shadow-lg);
+    max-width: 1120px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.gt-search--dark {
+    background: rgba(20, 22, 20, .72);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, .16);
+}
+
+.gt-search__group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px 30px;
+    border-right: 1px solid var(--gt-line);
+    min-width: 0;
+}
+
+/* No divider immediately before the submit button (single-row layout only —
+   below 992px the fields stack and use bottom borders instead). */
+@media (min-width: 992px) {
+    .gt-search__group:nth-of-type(4) {
+        border-right: 0;
+        padding-right: 22px;
+    }
+}
+
+.gt-search--dark .gt-search__group {
+    border-right-color: rgba(255, 255, 255, .16);
+}
+
+.gt-search__group label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gt-muted);
+    margin-bottom: 8px;
+}
+
+.gt-search--dark .gt-search__group label {
+    color: rgba(255, 255, 255, .7);
+}
+
+.gt-search__group select,
+.gt-search__group input {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gt-ink);
+    width: 100%;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.gt-search--dark .gt-search__group select,
+.gt-search--dark .gt-search__group input {
+    color: #fff;
+}
+
+.gt-search--dark .gt-search__group option {
+    color: var(--gt-ink);
+}
+
+.gt-search__group input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(.5);
+    cursor: pointer;
+}
+
+.gt-search--dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+.gt-search__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 999px;
+    padding: 0 40px;
+    min-height: 62px;
+    background: var(--gt-brand);
+    color: #fff;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: filter var(--gt-transition), transform var(--gt-transition);
+}
+
+.gt-search__submit:hover {
+    filter: brightness(1.07);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 991px) {
+    .gt-search {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        border-radius: var(--gt-radius);
+        padding: 12px;
+    }
+
+    .gt-search__group {
+        border-right: 0;
+        border-bottom: 1px solid var(--gt-line);
+        padding: 10px 14px;
+    }
+
+    .gt-search--dark .gt-search__group {
+        border-bottom-color: rgba(255, 255, 255, .16);
+    }
+
+    .gt-search__submit {
+        grid-column: 1 / -1;
+        justify-content: center;
+        padding: 14px 30px;
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 575px) {
+    .gt-search {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ------------------------------------------------------------------- stats */
+
+.gt-stats-bar {
+    padding: 42px 0;
+    background: var(--secondary-color, #fdf8f1);
+}
+
+.gt-stats-bar__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    text-align: center;
+}
+
+.gt-stat__value {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--gt-ink);
+    line-height: 1.1;
+}
+
+.gt-stat__label {
+    margin-top: 6px;
+    color: var(--gt-muted);
+    font-size: 14px;
+}
+
+@media (max-width: 767px) {
+    .gt-stats-bar__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ---------------------------------------------------------------- benefits */
+
+.gt-benefit {
+    display: flex;
+    gap: 18px;
+    padding: 30px 26px;
+    background: #fff;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius);
+    height: 100%;
+    transition: transform var(--gt-transition), box-shadow var(--gt-transition);
+}
+
+.gt-benefit:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--gt-shadow);
+}
+
+.gt-benefit__icon {
+    flex: 0 0 54px;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--secondary-color, #fdf8f1);
+}
+
+.gt-benefit__icon img {
+    width: 26px;
+    height: 26px;
+}
+
+.gt-benefit__body .h5 {
+    margin-bottom: 7px;
+}
+
+.gt-benefit__body p {
+    font-size: 14.5px;
+    line-height: 1.6;
+}
+
+/* ------------------------------------------------------------------- cards */
+
+.gt-star-empty {
+    color: var(--gt-line) !important;
+    opacity: .75;
+}
+
+.gt-price-was {
+    text-decoration: line-through;
+    color: var(--gt-muted);
+    font-weight: 500;
+    font-size: .82em;
+    margin-right: 6px;
+}
+
+.gt-price-suffix {
+    font-size: .68em;
+    font-weight: 500;
+    color: var(--gt-muted);
+}
+
+.gt-flag-sale {
+    background: var(--gt-danger) !important;
+    color: #fff !important;
+}
+
+.item.hover-img .images-group img {
+    transition: transform .7s cubic-bezier(.2, .8, .2, 1);
+}
+
+.item.hover-img:hover .images-group img {
+    transform: scale(1.07);
+}
+
+.btn-wished {
+    border: 0;
+    background: rgba(255, 255, 255, .92);
+    cursor: pointer;
+    transition: background var(--gt-transition), transform var(--gt-transition);
+}
+
+.btn-wished:hover {
+    transform: scale(1.08);
+}
+
+.btn-wished.is-active {
+    background: var(--heart-color, #ff4f23);
+}
+
+.btn-wished.is-active .icon {
+    filter: brightness(0) invert(1);
+}
+
+/* The wide card prints white text straight onto the photo, so it needs a
+   scrim of its own — bright images made it unreadable without one. */
+.flat-recommended .item.list-style-02 .images-group::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+            rgba(11, 15, 12, .06) 22%,
+            rgba(11, 15, 12, .58) 58%,
+            rgba(11, 15, 12, .93) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.flat-recommended .item.list-style-02 .group-meta {
+    z-index: 2;
+}
+
+.flat-recommended .item.list-style-02 .archive-bottom {
+    z-index: 2;
+    padding: 22px 24px;
+}
+
+.flat-recommended .item.list-style-02 .content-bottom {
+    padding-top: 14px;
+    margin-top: 12px;
+}
+
+.gt-card-summary {
+    font-size: 14.5px;
+    line-height: 1.65;
+    margin: 10px 0 4px;
+}
+
+.gt-card-actions {
+    margin-top: 16px;
+}
+
+/* ------------------------------------------------------------ testimonials */
+
+.gt-testimonial {
+    background: #fff;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius);
+    padding: 30px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.gt-testimonial__body {
+    color: var(--gt-muted);
+    line-height: 1.7;
+    flex: 1;
+}
+
+.gt-testimonial__author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gt-line);
+}
+
+.gt-testimonial__avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.gt-spotlight__image {
+    width: 100%;
+    border-radius: var(--gt-radius);
+    box-shadow: var(--gt-shadow);
+}
+
+/* ------------------------------------------------------------- page titles */
+
+.gt-page-title--image {
+    background-size: cover;
+    background-position: center;
+}
+
+.gt-page-title--image .title,
+.gt-page-title--image .breadcrumb a,
+.gt-page-title--image .breadcrumb .current,
+.gt-page-title--image .gt-crumb-sep {
+    color: #fff !important;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 9px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.gt-crumb-sep {
+    color: var(--gt-muted);
+}
+
+/* ------------------------------------------------------------------ badges */
+
+.gt-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+.gt-badge--success { background: rgba(47, 158, 107, .12); color: var(--gt-ok); }
+.gt-badge--warning { background: rgba(217, 154, 43, .14); color: var(--gt-warn); }
+.gt-badge--danger  { background: rgba(208, 80, 60, .12);  color: var(--gt-danger); }
+.gt-badge--info    { background: rgba(61, 126, 166, .12); color: var(--gt-info); }
+.gt-badge--muted   { background: rgba(95, 97, 94, .1);    color: var(--gt-muted); }
+
+/* ------------------------------------------------------------------ toasts */
+
+.gt-toast-stack {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: min(380px, calc(100vw - 40px));
+}
+
+.gt-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: var(--gt-radius-sm);
+    background: #fff;
+    box-shadow: var(--gt-shadow-lg);
+    border-left: 4px solid var(--gt-info);
+    animation: gt-toast-in .3s ease;
+}
+
+.gt-toast--success { border-left-color: var(--gt-ok); }
+.gt-toast--error   { border-left-color: var(--gt-danger); }
+
+.gt-toast.is-leaving {
+    animation: gt-toast-out .4s ease forwards;
+}
+
+.gt-toast__text {
+    flex: 1;
+    font-size: 14.5px;
+    color: var(--gt-ink);
+    line-height: 1.55;
+}
+
+.gt-toast__close {
+    border: 0;
+    background: none;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--gt-muted);
+    cursor: pointer;
+}
+
+@keyframes gt-toast-in {
+    from { opacity: 0; transform: translateY(14px); }
+}
+
+@keyframes gt-toast-out {
+    to { opacity: 0; transform: translateX(24px); }
+}
+
+/* ------------------------------------------------------------- empty state */
+
+.gt-empty-state {
+    padding: 64px 24px;
+    border: 1px dashed var(--gt-line);
+    border-radius: var(--gt-radius);
+    background: #fff;
+}
+
+.gt-empty-state__icon {
+    width: 96px;
+    opacity: .75;
+}
+
+.gt-form-error {
+    color: var(--gt-danger);
+    font-size: 13.5px;
+}
+
+/* --------------------------------------------------------- tour list filters */
+
+.sidebar-filter {
+    background: #fff;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius);
+    padding: 26px;
+}
+
+.widget-item + .widget-item {
+    margin-top: 26px;
+    padding-top: 26px;
+    border-top: 1px solid var(--gt-line);
+}
+
+.gt-filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.gt-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--gt-muted);
+    font-size: 14.5px;
+}
+
+.gt-check input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gt-brand);
+    cursor: pointer;
+    flex: 0 0 18px;
+}
+
+.gt-check:hover {
+    color: var(--gt-ink);
+}
+
+.gt-check__count {
+    margin-left: auto;
+    font-size: 12.5px;
+    color: var(--note-color, #a8abae);
+}
+
+.gt-filter-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.gt-filter-reset {
+    font-size: 13.5px;
+    color: var(--gt-danger);
+    text-decoration: underline;
+}
+
+#gt-price-slider {
+    margin: 26px 6px 12px;
+}
+
+.noUi-connect {
+    background: var(--gt-brand);
+}
+
+.noUi-handle {
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .18);
+    cursor: grab;
+}
+
+.gt-price-label {
+    font-weight: 600;
+    color: var(--gt-ink);
+}
+
+.gt-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-bottom: 22px;
+}
+
+.gt-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--secondary-color, #fdf8f1);
+    border: 1px solid var(--gt-line);
+    font-size: 13.5px;
+    color: var(--gt-ink);
+    transition: all var(--gt-transition);
+}
+
+.gt-chip:hover {
+    border-color: var(--gt-danger);
+    color: var(--gt-danger);
+}
+
+.gt-chip__x {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.gt-listing-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+}
+
+.gt-layout-switch {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--gt-line);
+    border-radius: 999px;
+    background: #fff;
+}
+
+.gt-layout-switch button {
+    border: 0;
+    background: none;
+    width: 38px;
+    height: 34px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background var(--gt-transition);
+}
+
+.gt-layout-switch button.is-active {
+    background: var(--secondary-color, #fdf8f1);
+}
+
+.gt-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gt-sort select,
+.gt-select {
+    border: 1px solid var(--gt-line);
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--gt-ink);
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+}
+
+.gt-filter-drawer-toggle {
+    display: none;
+}
+
+@media (max-width: 991px) {
+    .gt-filter-drawer-toggle {
+        display: inline-flex;
+    }
+}
+
+/* ------------------------------------------------------------- tour detail */
+
+/* One large lead photo plus a 2×2 block of thumbnails. */
+.gt-tour-hero {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 232px);
+    gap: 12px;
+    border-radius: var(--gt-radius);
+    overflow: hidden;
+}
+
+.gt-tour-hero__item {
+    display: block;
+    overflow: hidden;
+    position: relative;
+}
+
+.gt-tour-hero__item:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.gt-tour-hero__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .8s cubic-bezier(.2, .8, .2, 1);
+}
+
+.gt-tour-hero__item:hover img {
+    transform: scale(1.05);
+}
+
+.gt-tour-hero__more {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(15, 18, 15, .55);
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+@media (max-width: 767px) {
+    .gt-tour-hero {
+        grid-template-columns: 1fr;
+        grid-template-rows: 240px;
+    }
+
+    .gt-tour-hero__item:not(:first-child) {
+        display: none;
+    }
+
+    .gt-tour-hero__item:first-child {
+        grid-row: span 1;
+    }
+}
+
+.gt-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 18px;
+    padding: 26px;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius);
+    background: #fff;
+}
+
+.gt-info-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.gt-info-item__icon {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    border-radius: 50%;
+    background: var(--secondary-color, #fdf8f1);
+    display: grid;
+    place-items: center;
+}
+
+.gt-info-item__icon img {
+    width: 22px;
+    height: 22px;
+    /* icons ship in mixed colours (white, grey, gold); the white ones are
+       invisible on the light circle, so flatten them all to ink */
+    filter: brightness(0) opacity(.88);
+}
+
+.gt-info-item__label {
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--gt-muted);
+}
+
+.gt-info-item__value {
+    font-weight: 700;
+    color: var(--gt-ink);
+}
+
+.box-property-detail {
+    padding-bottom: 40px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--gt-line);
+}
+
+.gt-list-check {
+    display: grid;
+    gap: 11px;
+}
+
+.gt-list-check li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    color: var(--gt-muted);
+    line-height: 1.6;
+}
+
+.gt-list-check li::before {
+    content: "✓";
+    color: var(--gt-ok);
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+
+.gt-list-check--exclude li::before {
+    content: "✕";
+    color: var(--gt-danger);
+}
+
+.gt-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gt-tag {
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--gt-line);
+    background: #fff;
+    font-size: 14px;
+    color: var(--gt-muted);
+}
+
+/* itinerary ---------------------------------------------------------------- */
+
+.gt-itinerary {
+    position: relative;
+    padding-left: 34px;
+}
+
+.gt-itinerary::before {
+    content: "";
+    position: absolute;
+    left: 11px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--gt-line);
+}
+
+.gt-itinerary__item {
+    position: relative;
+    padding-bottom: 22px;
+}
+
+.gt-itinerary__item:last-child {
+    padding-bottom: 0;
+}
+
+.gt-itinerary__dot {
+    position: absolute;
+    left: -34px;
+    top: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--gt-brand);
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gt-brand);
+}
+
+.gt-itinerary__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.gt-itinerary__day {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--gt-brand);
+}
+
+.gt-itinerary__title {
+    font-weight: 700;
+    color: var(--gt-ink);
+    font-size: 17px;
+}
+
+.gt-itinerary__body {
+    display: none;
+    padding-top: 10px;
+    color: var(--gt-muted);
+    line-height: 1.7;
+}
+
+.gt-itinerary__item.is-open .gt-itinerary__body {
+    display: block;
+}
+
+.gt-itinerary__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.gt-itinerary__caret {
+    transition: transform var(--gt-transition);
+    color: var(--gt-muted);
+}
+
+.gt-itinerary__item.is-open .gt-itinerary__caret {
+    transform: rotate(180deg);
+}
+
+/* faqs --------------------------------------------------------------------- */
+
+.gt-faq__item {
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius-sm);
+    padding: 18px 22px;
+    margin-bottom: 12px;
+    background: #fff;
+}
+
+.gt-faq__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
+    background: none;
+    border: 0;
+    padding: 0;
+    text-align: left;
+    font-weight: 700;
+    color: var(--gt-ink);
+    cursor: pointer;
+}
+
+.gt-faq__body {
+    display: none;
+    padding-top: 12px;
+    color: var(--gt-muted);
+    line-height: 1.7;
+}
+
+.gt-faq__item.is-open .gt-faq__body {
+    display: block;
+}
+
+.gt-faq__item.is-open .gt-itinerary__caret {
+    transform: rotate(180deg);
+}
+
+/* reviews ------------------------------------------------------------------ */
+
+.gt-review-summary {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 34px;
+    align-items: center;
+    padding: 30px;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius);
+    background: var(--secondary-color, #fdf8f1);
+}
+
+.gt-review-score {
+    text-align: center;
+}
+
+.gt-review-score__value {
+    font-size: 54px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--gt-ink);
+}
+
+.gt-review-bars {
+    display: grid;
+    gap: 10px;
+}
+
+.gt-review-bar {
+    display: grid;
+    grid-template-columns: 58px 1fr 44px;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--gt-muted);
+}
+
+.gt-review-bar__track {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(95, 97, 94, .13);
+    overflow: hidden;
+}
+
+.gt-review-bar__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--star-color, #f1913d);
+}
+
+@media (max-width: 575px) {
+    .gt-review-summary {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+}
+
+.gt-review {
+    display: flex;
+    gap: 18px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--gt-line);
+}
+
+.gt-review__avatar {
+    width: 60px;
+    height: 60px;
+    flex: 0 0 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.gt-review__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.gt-review__name {
+    font-weight: 700;
+    color: var(--gt-ink);
+}
+
+.gt-review__date {
+    font-size: 13px;
+    color: var(--note-color, #a8abae);
+}
+
+.gt-review__body {
+    margin-top: 10px;
+    color: var(--gt-muted);
+    line-height: 1.7;
+}
+
+.gt-rating-picker {
+    display: inline-flex;
+    gap: 6px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.gt-rating-picker [data-star] {
+    color: var(--gt-line);
+    transition: color .15s ease, transform .15s ease;
+}
+
+.gt-rating-picker [data-star].is-active {
+    color: var(--star-color, #f1913d);
+}
+
+.gt-rating-picker [data-star]:hover {
+    transform: scale(1.15);
+}
+
+/* booking widget ----------------------------------------------------------- */
+
+.gt-booking {
+    position: sticky;
+    top: 110px;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius);
+    background: #fff;
+    box-shadow: var(--gt-shadow);
+    overflow: hidden;
+}
+
+.gt-booking__head {
+    padding: 24px 26px;
+    background: var(--secondary-color, #fdf8f1);
+    border-bottom: 1px solid var(--gt-line);
+}
+
+.gt-booking__price {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--gt-ink);
+    line-height: 1.1;
+}
+
+.gt-booking__body {
+    padding: 24px 26px;
+    display: grid;
+    gap: 18px;
+}
+
+/* Direct child only — nested labels (extras, checkboxes) keep their own style. */
+.gt-field > label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--gt-muted);
+    margin-bottom: 7px;
+}
+
+.gt-field input,
+.gt-field select,
+.gt-field textarea {
+    width: 100%;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius-sm);
+    padding: 12px 14px;
+    font-size: 15px;
+    color: var(--gt-ink);
+    background: #fff;
+    outline: none;
+    transition: border-color var(--gt-transition), box-shadow var(--gt-transition);
+}
+
+.gt-field input:focus,
+.gt-field select:focus,
+.gt-field textarea:focus {
+    border-color: var(--gt-brand);
+    box-shadow: 0 0 0 3px rgba(220, 165, 70, .16);
+}
+
+.gt-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 11px 14px;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius-sm);
+}
+
+.gt-stepper__controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gt-stepper button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--gt-line);
+    background: #fff;
+    cursor: pointer;
+    font-size: 17px;
+    line-height: 1;
+    color: var(--gt-ink);
+    transition: all var(--gt-transition);
+}
+
+.gt-stepper button:hover {
+    background: var(--gt-brand);
+    border-color: var(--gt-brand);
+    color: #fff;
+}
+
+.gt-stepper input {
+    width: 46px;
+    text-align: center;
+    border: 0;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--gt-ink);
+    background: transparent;
+    outline: none;
+    -moz-appearance: textfield;
+}
+
+.gt-stepper input::-webkit-outer-spin-button,
+.gt-stepper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.gt-extras {
+    display: grid;
+    gap: 10px;
+}
+
+.gt-extra {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14.5px;
+    color: var(--gt-muted);
+    cursor: pointer;
+}
+
+.gt-extra input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gt-brand);
+    cursor: pointer;
+}
+
+.gt-extra__price {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--gt-ink);
+}
+
+.gt-breakdown {
+    display: grid;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--gt-line);
+    font-size: 14.5px;
+    color: var(--gt-muted);
+}
+
+.gt-breakdown li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.gt-booking__total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 26px;
+    background: var(--secondary-color, #fdf8f1);
+    border-top: 1px solid var(--gt-line);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gt-ink);
+}
+
+.gt-booking__cta {
+    padding: 0 26px 26px;
+}
+
+.gt-warning {
+    color: var(--gt-danger);
+    font-size: 13.5px;
+    margin-top: 8px;
+}
+
+/* ------------------------------------------------------------------ layout */
+
+/* Pages that open straight into content (no page-title band) must clear the
+   fixed header themselves. */
+.gt-page-offset {
+    padding-top: 148px;
+}
+
+@media (max-width: 991px) {
+    .gt-page-offset {
+        padding-top: 104px;
+    }
+}
+
+.gt-section {
+    padding: 72px 0;
+}
+
+.gt-section--tight {
+    padding: 48px 0;
+}
+
+.gt-prose p + p {
+    margin-top: 16px;
+}
+
+.gt-prose p {
+    color: var(--gt-muted);
+    line-height: 1.8;
+}
+
+/* Breathing room between a page-title band and the content beneath it.
+   The theme shrinks .flat-section padding to 60px below 1440px, which is too
+   tight here, so the gap is stated explicitly. */
+.gt-section-top-gap {
+    padding-top: 104px;
+}
+
+@media (max-width: 991px) {
+    .gt-section-top-gap {
+        padding-top: 64px;
+    }
+}
+
+/* A tinted full-bleed band, used to separate a section from the white one
+   above it without needing a divider. */
+.gt-section-tint {
+    background: var(--secondary-color, #fdf8f1);
+    padding: 110px 0 100px;
+    margin-top: 40px;
+}
+
+@media (max-width: 991px) {
+    .gt-section-tint {
+        padding: 72px 0 64px;
+        margin-top: 24px;
+    }
+}
+
+.gt-destination-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+@media (max-width: 1199px) {
+    .gt-destination-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 991px) {
+    .gt-destination-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 575px) {
+    .gt-destination-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* The theme already styles .destination-post (a floating white caption card
+   over the photo); the grid only needs to give each tile a size, since the
+   original markup got that from the carousel. */
+.gt-destination-grid .destination-post .img-style {
+    display: block;
+    aspect-ratio: 3 / 4;
+}
+
+.gt-destination-grid .destination-post .img-style img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .7s cubic-bezier(.2, .8, .2, 1);
+}
+
+.gt-destination-grid .item.hover-img:hover .destination-post img {
+    transform: scale(1.06);
+}
+
+.gt-destination-grid .destination-post .content h4 a {
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.gt-destination-grid .destination-post .content h4 a:hover {
+    color: var(--gt-brand);
+}
+
+.gt-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.gt-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 30px;
+}
+
+.gt-stack {
+    display: grid;
+    gap: 24px;
+}
+
+.gt-card {
+    background: #fff;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius);
+    padding: 26px;
+}
+
+.gt-auth-card {
+    max-width: 460px;
+    margin: 0 auto;
+}
+
+.gt-hint {
+    font-size: 13.5px;
+    color: var(--gt-muted);
+}
+
+/* ------------------------------------------------------------ search modal */
+
+/* .gt-search-modal__row had no rules, so the submit button sat flush against
+   the input with no breathing room, at the theme's full 54px hero-button size. */
+.gt-search-modal__row {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.gt-search-modal__row .tf-btn {
+    align-self: flex-start;
+    min-height: 42px;
+    min-width: 0;
+    padding: 10px 26px;
+    font-size: 14px;
+    line-height: 20px;
+    border-radius: var(--gt-radius-sm);
+}
+
+.gt-search-modal .subtitle {
+    margin-top: 22px;
+}
+
+/* ------------------------------------------------------------------ footer */
+
+/* The template only styles a subset of the footer's classes, so anything it
+   misses inherits Bootstrap's near-black body colour (#212529) and disappears
+   against the dark panel. Everything below either restores legible contrast or
+   fixes markup the theme's SCSS never targeted (.tour-list, .menu-bottom li,
+   .footer-send, .label). All values clear WCAG AA on --background-black. */
+
+.footer {
+    /* The theme's --border-icon (#5F6C5A33) resolves to ~#252625 here — the
+       dividers were effectively invisible. */
+    --border-icon: rgba(255, 255, 255, .11);
+    --gt-footer-text: rgba(255, 255, 255, .72);
+    --gt-footer-muted: rgba(255, 255, 255, .55);
+}
+
+.footer a:focus-visible,
+.footer button:focus-visible,
+.footer input:focus-visible {
+    outline: 2px solid var(--gt-brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* top bar — social icons ---------------------------------------------------- */
+
+.footer .footer-socials .list-social a {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-icon);
+    border-radius: 50%;
+    color: var(--gt-footer-text);
+    font-size: 16px;
+    transition: color var(--gt-transition), background-color var(--gt-transition), border-color var(--gt-transition);
+}
+
+.footer .footer-socials .list-social a:hover {
+    color: var(--background-black);
+    background-color: var(--gt-brand);
+    border-color: var(--gt-brand);
+}
+
+.footer .footer-logo img {
+    max-height: 56px;
+    width: auto;
+}
+
+/* widget columns ------------------------------------------------------------ */
+
+.footer .inner-footer {
+    padding-top: 40px;
+}
+
+.footer .inner-footer .widget-title .h4 {
+    font-size: 20px;
+    line-height: 1.3;
+}
+
+/* Contact rows read as label-above-value; the theme laid them out as a
+   centred row, which left the labels floating beside their values. */
+.footer .inner-footer .widget-info .widget-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.footer .inner-footer .widget-info .widget-contact .label {
+    margin: 0;
+    color: var(--gt-footer-muted);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.footer .inner-footer .widget-info .widget-contact p.text-white {
+    color: var(--gt-footer-text) !important;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.footer .inner-footer .widget-info .widget-contact a.text-white {
+    transition: color var(--gt-transition);
+}
+
+.footer .inner-footer .widget-info .widget-contact a.text-white:hover {
+    color: var(--gt-brand) !important;
+}
+
+/* Popular destinations: markup uses .tour-list > li > a, the theme's SCSS
+   targets .tour-item a — so these links were never coloured at all. */
+.footer .inner-footer .widget-tour .tour-list a {
+    display: inline-block;
+    color: var(--gt-footer-text);
+    font-size: 15px;
+    line-height: 1.5;
+    transition: color var(--gt-transition);
+}
+
+.footer .inner-footer .widget-tour .tour-list a:hover {
+    color: var(--gt-brand);
+}
+
+/* newsletter ---------------------------------------------------------------- */
+
+.footer .inner-footer .widget-newseletter .text-note {
+    color: var(--gt-footer-text);
+    max-width: 42ch;
+}
+
+.footer .footer-send {
+    position: relative;
+    max-width: 420px;
+}
+
+.footer .footer-send input {
+    width: 100%;
+    height: 56px;
+    padding: 0 60px 0 18px;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid var(--border-icon);
+    border-radius: var(--gt-radius-sm);
+    color: var(--white);
+    font-size: 15px;
+    transition: border-color var(--gt-transition), background-color var(--gt-transition);
+}
+
+.footer .footer-send input::placeholder {
+    color: var(--gt-footer-muted);
+    opacity: 1;
+}
+
+.footer .footer-send input:focus {
+    background: rgba(255, 255, 255, .07);
+    border-color: var(--gt-brand);
+    outline: none;
+}
+
+.footer .footer-send button {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: var(--gt-brand);
+    border: 0;
+    border-radius: var(--gt-radius-sm);
+    cursor: pointer;
+    transition: filter var(--gt-transition);
+}
+
+.footer .footer-send button:hover {
+    filter: brightness(1.1);
+}
+
+.footer .footer-send button img {
+    width: 18px;
+    height: 18px;
+    /* The asset is stroked in --primary-color; flatten it to ink so it reads
+       on the brand-filled button. */
+    filter: brightness(0);
+}
+
+/* --gt-danger is tuned for white cards and only reaches 4.1:1 here. */
+.footer .gt-form-error {
+    color: #f08a78;
+}
+
+.footer .action-download a img {
+    height: 44px;
+    width: auto;
+}
+
+/* bottom bar ---------------------------------------------------------------- */
+
+.footer .content-bottom {
+    padding: 24px 0 28px;
+}
+
+.footer .content-bottom .copy-right {
+    color: var(--gt-footer-muted);
+}
+
+.footer .content-bottom .copy-right a {
+    color: var(--gt-footer-text);
+    transition: color var(--gt-transition);
+}
+
+.footer .content-bottom .copy-right a:hover {
+    color: var(--gt-brand);
+}
+
+/* Markup uses .menu-bottom > li > a; the theme's SCSS targets .item-bottom. */
+.footer .content-bottom .menu-bottom a {
+    color: var(--gt-footer-muted);
+    font-size: 14px;
+    line-height: 24px;
+    transition: color var(--gt-transition);
+}
+
+.footer .content-bottom .menu-bottom a:hover {
+    color: var(--gt-brand);
+}
+
+@media (max-width: 991px) {
+    .footer .inner-footer {
+        padding-top: 44px;
+    }
+
+    .footer .footer-send {
+        max-width: none;
+    }
+}
+
+@media (max-width: 575px) {
+    .footer .top-footer .content-top-footer {
+        padding-top: 44px;
+    }
+
+    .footer .inner-footer .widget-tour .tour-list.tf-col-2 {
+        gap: 14px 20px !important;
+    }
+
+    .footer .content-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .footer .content-bottom .menu-bottom {
+        gap: 24px;
+    }
+}
+
+/* ==========================================================================
+   Form controls — custom dropdowns and date fields (see assets/js/controls.js).
+
+   The native <select> popup and the browser's mm/dd/yyyy date chrome are the
+   two bits of UI the theme could never reach. Both are replaced here: the
+   native element stays in the DOM for submission and validation while these
+   rules skin the trigger that sits in its place. Skins are per context so a
+   dropdown always matches the field next to it.
+   ========================================================================== */
+
+.gt-combo {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    text-align: left;
+}
+
+/* Invisible, but still laid out: `display: none` would break `:required`
+   validation, which needs something focusable to anchor its message to. */
+.gt-combo > select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.gt-combo__trigger,
+.gt-date {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 0;
+    border: 1px solid var(--gt-line);
+    border-radius: var(--gt-radius-sm);
+    background: #fff;
+    padding: 11px 14px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--gt-ink);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--gt-transition), box-shadow var(--gt-transition),
+        background var(--gt-transition), color var(--gt-transition);
+}
+
+.gt-combo__value,
+.gt-date__text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gt-combo.is-empty .gt-combo__value,
+.gt-date.is-empty .gt-date__text {
+    color: var(--gt-muted);
+    font-weight: 400;
+}
+
+.gt-combo__caret {
+    flex: none;
+    font-size: 11px;
+    color: var(--gt-muted);
+    transition: transform var(--gt-transition), color var(--gt-transition);
+}
+
+.gt-combo.is-open .gt-combo__caret {
+    transform: rotate(180deg);
+    color: var(--gt-brand);
+}
+
+.gt-combo__trigger:hover,
+.gt-date:hover {
+    border-color: var(--gt-brand);
+}
+
+.gt-combo.is-open .gt-combo__trigger,
+.gt-combo__trigger:focus-visible,
+.gt-date:focus-within {
+    outline: none;
+    border-color: var(--gt-brand);
+    box-shadow: 0 0 0 3px rgba(220, 165, 70, .18);
+}
+
+.gt-combo__trigger:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------- date field */
+
+.gt-date {
+    display: inline-flex;
+}
+
+.gt-date > input[type="date"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    background: none;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.gt-date > input[type="date"]::-webkit-calendar-picker-indicator {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.gt-date__display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    pointer-events: none;
+}
+
+.gt-date__icon {
+    flex: none;
+    color: var(--gt-muted);
+}
+
+.gt-date:focus-within .gt-date__icon {
+    color: var(--gt-brand);
+}
+
+/* ------------------------------------------------------------------- panel */
+
+.gt-combo-panel {
+    position: fixed;
+    z-index: 1400;
+    display: flex;
+    flex-direction: column;
+    /* Set from JS to the space actually available above or below the trigger;
+       the list scrolls inside whatever is left after the filter box. */
+    max-height: var(--gt-combo-max, 320px);
+    background: #fff;
+    border: 1px solid var(--gt-line);
+    border-radius: 16px;
+    box-shadow: 0 20px 48px rgba(23, 24, 22, .18);
+    padding: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px) scale(.98);
+    transform-origin: top center;
+    /* Hiding waits for the fade-out; showing is instant, or the filter box
+       inside would still be unfocusable on the frame we open. */
+    transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+}
+
+.gt-combo-panel.is-up:not(.is-open) {
+    transform: translateY(8px) scale(.98);
+}
+
+.gt-combo-panel.is-up {
+    transform-origin: bottom center;
+}
+
+.gt-combo-panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity .18s ease, transform .18s ease, visibility 0s;
+}
+
+.gt-combo-panel__list {
+    flex: 1 1 auto;
+    min-height: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.gt-combo-panel__option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 11px;
+    font-size: 14.5px;
+    line-height: 1.35;
+    color: var(--gt-ink);
+    cursor: pointer;
+    transition: background var(--gt-transition), color var(--gt-transition);
+}
+
+.gt-combo-panel__label {
+    flex: 1;
+    min-width: 0;
+}
+
+.gt-combo-panel__tick {
+    flex: none;
+    font-size: 10px;
+    color: var(--gt-brand);
+    opacity: 0;
+    transform: scale(.7);
+    transition: opacity var(--gt-transition), transform var(--gt-transition);
+}
+
+.gt-combo-panel__option.is-active {
+    background: rgba(220, 165, 70, .12);
+}
+
+.gt-combo-panel__option.is-selected {
+    font-weight: 600;
+    color: var(--gt-ink);
+}
+
+.gt-combo-panel__option.is-selected .gt-combo-panel__tick {
+    opacity: 1;
+    transform: none;
+}
+
+.gt-combo-panel__option.is-disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.gt-combo-panel__search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px 10px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--gt-line);
+}
+
+.gt-combo-panel__search .icon {
+    font-size: 14px;
+    color: var(--gt-muted);
+}
+
+/* The theme styles every text input globally; win on specificity. Its
+   `transition: all` also has to go: it would animate the visibility this input
+   inherits from the panel, leaving it unfocusable on the frame we open. */
+.gt-combo-panel__search input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    padding: 2px 0;
+    font-size: 14.5px;
+    line-height: 1.4;
+    color: var(--gt-ink);
+    box-shadow: none;
+    transition: none;
+}
+
+.gt-combo-panel__search input[type="text"]:hover,
+.gt-combo-panel__search input[type="text"]:focus {
+    border-color: transparent !important;
+    outline: none;
+}
+
+.gt-combo-panel__empty {
+    margin: 0;
+    padding: 16px 12px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--gt-muted);
+}
+
+.gt-combo-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 1390;
+    background: rgba(15, 16, 15, .45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease, visibility .2s;
+}
+
+.gt-combo-scrim.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Below 576px the panel is a bottom sheet — thumb-reachable, and no fiddly
+   positioning against a soft keyboard. */
+@media (max-width: 575px) {
+    .gt-combo-panel--sheet {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: auto;
+        width: auto;
+        border-radius: 22px 22px 0 0;
+        border-bottom: 0;
+        padding: 10px 10px calc(12px + env(safe-area-inset-bottom, 0px));
+        transform: translateY(100%);
+        transform-origin: bottom center;
+    }
+
+    .gt-combo-panel--sheet::before {
+        content: "";
+        display: block;
+        width: 42px;
+        height: 4px;
+        margin: 4px auto 10px;
+        border-radius: 999px;
+        background: var(--gt-line);
+    }
+
+    .gt-combo-panel--sheet {
+        max-height: 68vh;
+    }
+
+    .gt-combo-panel--sheet .gt-combo-panel__option {
+        padding: 13px 14px;
+        font-size: 15.5px;
+    }
+}
+
+/* --------------------------------------------------------- context: hero search */
+
+.gt-search__group .gt-combo,
+.gt-search__group .gt-date {
+    width: 100%;
+}
+
+.gt-search__group .gt-combo__trigger,
+.gt-search__group .gt-date {
+    border: 0;
+    border-radius: 0;
+    background: none;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.gt-search__group .gt-combo__trigger:hover,
+.gt-search__group .gt-combo__trigger:focus-visible,
+.gt-search__group .gt-combo.is-open .gt-combo__trigger,
+.gt-search__group .gt-date:hover,
+.gt-search__group .gt-date:focus-within {
+    border: 0;
+    box-shadow: none;
+    color: var(--gt-brand);
+}
+
+/* Hovering a segment lights the whole cell, the way the big booking sites do. */
+.gt-search__group {
+    border-radius: 26px;
+    transition: background var(--gt-transition);
+}
+
+.gt-search__group:hover,
+.gt-search__group:focus-within {
+    background: rgba(220, 165, 70, .1);
+}
+
+.gt-search--dark .gt-search__group:hover,
+.gt-search--dark .gt-search__group:focus-within {
+    background: rgba(255, 255, 255, .1);
+}
+
+.gt-search--dark .gt-search__group .gt-combo__trigger,
+.gt-search--dark .gt-search__group .gt-date {
+    color: #fff;
+}
+
+.gt-search--dark .gt-search__group .gt-combo.is-empty .gt-combo__value,
+.gt-search--dark .gt-search__group .gt-date.is-empty .gt-date__text,
+.gt-search--dark .gt-search__group .gt-combo__caret,
+.gt-search--dark .gt-search__group .gt-date__icon {
+    color: rgba(255, 255, 255, .75);
+}
+
+.gt-search--dark .gt-search__group .gt-combo__trigger:hover,
+.gt-search--dark .gt-search__group .gt-combo.is-open .gt-combo__trigger,
+.gt-search--dark .gt-search__group .gt-date:hover,
+.gt-search--dark .gt-search__group .gt-date:focus-within {
+    color: #fff;
+}
+
+/* ------------------------------------------------- context: pills and filters */
+
+.gt-combo__trigger.gt-select,
+.gt-date.gt-select,
+.gt-sort .gt-combo__trigger {
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 14.5px;
+    font-weight: 600;
+}
+
+.gt-sort .gt-combo {
+    min-width: 168px;
+}
+
+.sidebar-filter .gt-combo {
+    display: block;
+    width: 100%;
+}
+
+/* --------------------------------------------------- context: stacked fields */
+
+.gt-field .gt-combo,
+.gt-field .gt-date {
+    width: 100%;
+}
+
+.gt-field .gt-combo__trigger,
+.gt-field .gt-date {
+    padding: 12px 14px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* ------------------------------------------------------------ context: admin */
+
+.adm-field .gt-combo,
+.adm-field .gt-date {
+    display: block;
+    width: 100%;
+}
+
+.adm-field .gt-combo__trigger,
+.adm-field .gt-date {
+    border-color: var(--adm-line);
+    border-radius: 10px;
+    padding: 10px 13px;
+    font-size: 14.5px;
+    color: var(--adm-ink);
+}
+
+.adm-field .gt-combo__trigger:hover,
+.adm-field .gt-date:hover,
+.adm-field .gt-combo.is-open .gt-combo__trigger,
+.adm-field .gt-combo__trigger:focus-visible,
+.adm-field .gt-date:focus-within {
+    border-color: var(--adm-brand);
+}
+
+.adm-field.is-invalid .gt-combo__trigger,
+.adm-field.is-invalid .gt-date {
+    border-color: #d0503c;
+}
+
+.adm-filters .gt-combo__trigger,
+.adm-filters .gt-date {
+    border-color: var(--adm-line);
+    border-radius: 9px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--adm-ink);
+}
+
+.adm-filters .gt-combo,
+.adm-filters .gt-date {
+    min-width: 150px;
+}
+
+.adm-filters .gt-combo.adm-grow,
+.adm-filters .gt-date.adm-grow {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* `adm-grow` sits on the field itself in the markup; it now lands on the box
+   that replaced it, and has to keep growing inside its flex row. */
+.gt-combo.adm-grow,
+.gt-date.adm-grow {
+    flex: 1 1 auto;
+}
+
+.adm-inline-form .gt-combo__trigger {
+    border-color: var(--adm-line);
+    border-radius: 9px;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: var(--adm-ink);
+}
+
+@media (max-width: 991px) {
+    .gt-search__group {
+        border-radius: 12px;
+    }
+}
+
+/* ----------------------------------------------- inline filter row (destinations)
+
+   The theme's .tf-btn is a hero-sized button (54px tall, 46px of side padding),
+   which dwarfed the pill-shaped controls beside it. In a filter row the submit
+   is a peer of the dropdown, so it matches its height and width. */
+
+.gt-inline-filter .gt-combo,
+.gt-inline-filter .gt-date,
+.gt-inline-filter .tf-btn {
+    width: 168px;
+    flex: none;
+}
+
+.gt-inline-filter .tf-btn {
+    min-width: 0;
+    min-height: 0;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 14.5px;
+    line-height: 1.35;
+}
+
+@media (max-width: 575px) {
+    .gt-inline-filter .gt-combo,
+    .gt-inline-filter .gt-date,
+    .gt-inline-filter .tf-btn {
+        width: 100%;
+    }
+}
+
+/* ------------------------------------------------------------ list tour card
+
+   The theme's wide list card never carried a call-to-action. Adding one made
+   the text column taller than the row the card is stretched to as a grid item,
+   so the button spilled past the column's 23px bottom padding and was clipped
+   flush against the card border. Sizing the card to its content instead keeps
+   the button inside it; list cards are one per row, so nothing needs the
+   equal-height stretch that grid cards rely on. */
+
+.flat-recommended .item.list-style-01 {
+    align-self: start;
+}
+
+.item.list-style-01 .gt-card-actions {
+    margin-top: 18px;
+}
+
+/* -------------------------------------------------------------------------
+   Notification bell — shared by the site header and the admin topbar.
+   ------------------------------------------------------------------------- */
+
+.gt-notif {
+    position: relative;
+    display: inline-flex;
+}
+
+.gt-notif__trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color .2s ease;
+}
+
+.gt-notif__trigger:hover {
+    background: rgba(0, 0, 0, .06);
+}
+
+.gt-notif__count {
+    position: absolute;
+    top: 2px;
+    right: 1px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #ff4f23;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 17px;
+    text-align: center;
+}
+
+.gt-notif__panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 999;
+    width: 330px;
+    max-width: calc(100vw - 32px);
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, .14);
+    overflow: hidden;
+}
+
+.gt-notif__panel[hidden] {
+    display: none;
+}
+
+.gt-notif__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid #eef0f3;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.gt-notif__readall {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.gt-notif__readall:hover {
+    color: #0f172a;
+    text-decoration: underline;
+}
+
+.gt-notif__list {
+    max-height: 340px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+}
+
+.gt-notif__item + .gt-notif__item {
+    border-top: 1px solid #f1f3f5;
+}
+
+.gt-notif__item button {
+    display: block;
+    width: 100%;
+    padding: 11px 14px;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.gt-notif__item button:hover {
+    background: #f8fafc;
+}
+
+.gt-notif__item.is-unread button {
+    background: #f4f8ff;
+}
+
+.gt-notif__item.is-unread button:hover {
+    background: #eaf1ff;
+}
+
+.gt-notif__title {
+    display: block;
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.gt-notif__msg {
+    display: block;
+    margin-top: 2px;
+    color: #4b5563;
+    font-size: 12.5px;
+    line-height: 1.45;
+}
+
+.gt-notif__foot {
+    display: block;
+    margin-top: 4px;
+    color: #9ca3af;
+    font-size: 11.5px;
+}
+
+.gt-notif__empty {
+    padding: 22px 14px;
+    color: #9ca3af;
+    font-size: 13px;
+    text-align: center;
+}
