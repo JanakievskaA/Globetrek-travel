@@ -83,43 +83,9 @@ idle, so `sail:install --with=none` is the honest stack. Moving to MySQL would
 be a real change, not a config flag, and worth doing only if the deployment
 target needs it.
 
----
-
-## Running it with Docker alone
-
-Sail expects Composer on the host. This path needs **only Docker** — useful for
-handing the project to someone who has no PHP installed:
-
-```bash
-git clone git@github.com:JanakievskaA/Globetrek-travel.git
-cd Globetrek-travel
-docker compose -f docker-compose.standalone.yml up
-```
-
-Then open <http://localhost:8123>, and log in with the
-[demo accounts](#demo-accounts). The first boot generates an app key, creates
-the SQLite file, migrates, seeds and links storage in the entrypoint, so there
-is nothing to run by hand.
-
-| Task | Command (all prefixed `docker compose -f docker-compose.standalone.yml`) |
-| ---- | ------- |
-| Start (detached) | `… up -d` |
-| Stop, keep data | `… down` |
-| Stop and wipe data | `… down -v` |
-| Logs | `… logs -f` |
-| Run the tests | `… exec app php artisan test` |
-
-This container is named `globetrek-standalone`, distinct from Sail's
-`globetrek`, so the two never clash over a name.
-
-Unlike Sail this image is self-contained rather than bind-mounted: the database,
-app key and uploads live in a named volume on `/app/storage`, so `down` then
-`up` keeps data and `down -v` is the deliberate reset. Nothing here touches the
-`database/database.sqlite` in your checkout. Code changes need a rebuild — for
-day-to-day development, prefer Sail.
-
-Both Docker paths run `php artisan serve`, which is fine for a demo but wants a
-real web server in front of it before production.
+Sail is a local development environment: inside the container `php artisan serve`
+does the serving, under supervisord. That is fine for development and for a
+demo, but put a real web server in front of it before production.
 
 ---
 
