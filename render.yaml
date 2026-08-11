@@ -1,0 +1,67 @@
+# Render Blueprint. Importing this repo as a Blueprint creates the service
+# below with every setting already in place, so nothing has to be clicked in
+# beyond the one secret.
+#
+# The free plan has two consequences worth knowing before you read further:
+# the instance sleeps after 15 minutes of inactivity and takes roughly a minute
+# to wake, and its disk is wiped on every deploy. The database is rebuilt from
+# the seeders on each boot (docker/entrypoint.sh), so bookings made through the
+# live site and images uploaded in the admin panel do not survive a redeploy.
+services:
+  - type: web
+    name: globetrek
+    runtime: docker
+    plan: free
+    # Render's EU region — closest to home, and the free plan is offered there.
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # Laravel registers this route itself, in bootstrap/app.php.
+    healthCheckPath: /up
+    autoDeploy: true
+    envVars:
+      # The only value Render cannot supply. sync: false keeps it out of the
+      # repo and asks for it once, at import. Generate one with:
+      #   php artisan key:generate --show
+      - key: APP_KEY
+        sync: false
+
+      - key: APP_NAME
+        value: GlobeTrek
+      - key: APP_ENV
+        value: production
+      # Never true here: the debug page prints environment variables to anyone
+      # who triggers an error.
+      - key: APP_DEBUG
+        value: "false"
+
+      # Logs to stdout/stderr, which is where Render's log stream reads from.
+      # A file under storage/logs would vanish with the instance.
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+
+      - key: DB_CONNECTION
+        value: sqlite
+
+      - key: SESSION_DRIVER
+        value: database
+      # Render terminates TLS at its edge and redirects http to https, so the
+      # cookie never needs to travel in the clear.
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+
+      - key: CACHE_STORE
+        value: database
+
+      # sync, not database: a free instance runs no queue worker, so anything
+      # pushed onto a database queue would sit there forever. Nothing in the app
+      # queues work today — this keeps it that way if something starts to.
+      - key: QUEUE_CONNECTION
+        value: sync
+
+      # Nothing is emailed (both notifications are in-app only), so mail goes to
+      # the log rather than failing against an SMTP server that is not there.
+      - key: MAIL_MAILER
+        value: log

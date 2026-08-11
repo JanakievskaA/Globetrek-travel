@@ -1,0 +1,39 @@
+# vendor/ is excluded on purpose: the image installs its own production-only
+# tree, and copying the local one over it would drag dev packages into the
+# build. The same goes for anything else generated on a developer's machine.
+.git
+.gitattributes
+.gitignore
+.editorconfig
+
+vendor
+node_modules
+
+.env
+.env.backup
+.env.production
+
+# Rebuilt by the entrypoint on every start.
+public/storage
+public/hot
+public/build
+database/*.sqlite*
+
+# Local state that would only stale out the image.
+storage/logs/*.log
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/public/uploads
+bootstrap/cache/*.php
+.phpunit.result.cache
+.phpunit.cache
+
+# Local-only tooling, not part of the running site.
+compose.yaml
+tests
+phpunit.xml
+tools
+.claude
+.vscode
+.idea
